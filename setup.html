@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instalação do Sistema - Forçar Criação</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-dark text-white d-flex align-items-center justify-content-center vh-100">
+
+    <div class="card p-4 text-dark" style="max-width: 600px; width: 100%;">
+        <h3 class="text-center mb-3">🛠 Forçar Criação do Banco</h3>
+        <p class="text-muted text-center">Este script tenta corrigir erros anteriores e forçar a criação das tabelas.</p>
+
+        <form id="formInstalacao">
+            <div class="mb-3">
+                <label class="form-label fw-bold">E-mail Admin</label>
+                <input type="email" id="emailAdmin" class="form-control" placeholder="admin@loja.com" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold">Senha</label>
+                <input type="password" id="senhaAdmin" class="form-control" placeholder="Mínimo 6 caracteres" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 py-2">INICIAR INSTALAÇÃO</button>
+        </form>
+
+        <!-- Área de Logs para você ver o que está acontecendo -->
+        <div class="mt-3 p-3 bg-light border rounded" style="max-height: 200px; overflow-y: auto;">
+            <small class="d-block fw-bold text-muted mb-2">Log de Execução:</small>
+            <div id="logArea" class="font-monospace" style="font-size: 0.85rem;">
+                <span class="text-muted">Aguardando início...</span>
+            </div>
+        </div>
+        
+        <div id="botaoFinal" class="mt-3 d-none">
+            <a href="admin/index.html" class="btn btn-success w-100">Tudo pronto! Ir para Login</a>
+        </div>
+    </div>
+
+    <!-- Script de Instalação Robusto -->
+    <script type="module">
+        import { db, auth, collection, addDoc, createUserWithEmailAndPassword, signInWithEmailAndPassword } from './js/firebase-config.js';
+
+        const form = document.getElementById('formInstalacao');
+        const logArea = document.getElementById('logArea');
+        const botaoFinal = document.getElementById('botaoFinal');
+
+        function log(msg, tipo = 'info') {
+            const colors = { 'info': 'text-dark', 'success': 'text-success', 'error': 'text-danger fw-bold' };
+            const time = new Date().toLocaleTimeString();
+            logArea.innerHTML += `<div class="${colors[tipo]}">[${time}] ${msg}</div>`;
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            logArea.innerHTML = ''; // Limpa log
+            const email = document.getElementById('emailAdmin').value;
+            const senha = document.getElementById('senhaAdmin').value;
+
+            log("Iniciando processo...");
+
+            let user = null;
+
+            // 1. TENTATIVA DE AUTENTICAÇÃO
+            try {
+                log("Tentando criar usuário...");
+                const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
+                user = userCredential.user;
+                log("Usuário criado com sucesso!", 'success');
+            } catch (error) {
+                if (error.code === 'auth/email-already-in-use') {
+                    log("Usuário já existe. Tentando logar...", 'info');
+                    try {
+                        const loginCredential = await signInWithEmailAndPassword(auth, email, senha);
+                        user = loginCredential.user;
+                        log("Logado com sucesso!", 'success');
+                    } catch (loginError) {
+                        log("ERRO AO LOGAR: " + loginError.message, 'error');
+                        return; // Para tudo se não conseguir logar
+                    }
+                } else {
+                    log("ERRO CRÍTICO NA CONTA: " + error.message, 'error');
+                    return;
+                }
+            }
+
+            // 2. CRIAÇÃO DAS COLEÇÕES (Uma por uma, sem parar se der erro em uma)
+            
+            // ADMINS
+            try {
+                log("Criando coleção 'admins'...");
+                await addDoc(collection(db, "admins"), {
+                    uid: user.uid,
+                    email: email,
+                    role: "super_admin",
+                    criadoEm: new Date()
+                });
+                log("✅ Coleção 'admins' criada.", 'success');
+            } catch (e) { log("❌ Erro em 'admins': " + e.message, 'error'); }
+
+            // CATEGORIAS
+            try {
+                log("Criando coleção 'categorias'...");
+                await addDoc(collection(db, "categorias"), {
+                    nome: "Lanches",
+                    ativa: true
+                });
+                log("✅ Coleção 'categorias' criada.", 'success');
+            } catch (e) { log("❌ Erro em 'categorias': " + e.message, 'error'); }
+
+            // PRODUTOS
+            try {
+                log("Criando coleção 'produtos'...");
+                await addDoc(collection(db, "produtos"), {
+                    nome: "X-Burger Teste",
+                    descricao: "Item de teste gerado automaticamente",
+                    preco: 19.90,
+                    categoria: "Lanches",
+                    imagem: ""
+                });
+                log("✅ Coleção 'produtos' criada.", 'success');
+            } catch (e) { log("❌ Erro em 'produtos': " + e.message, 'error'); }
+
+            // CONFIGURACOES
+            try {
+                log("Criando coleção 'configuracoes'...");
+                await addDoc(collection(db, "configuracoes"), {
+                    nomeLoja: "Hamburgueria Demo",
+                    taxaEntrega: 5.00
+                });
+                log("✅ Coleção 'configuracoes' criada.", 'success');
+            } catch (e) { log("❌ Erro em 'configuracoes': " + e.message, 'error'); }
+
+            log("Processo finalizado.", 'info');
+            botaoFinal.classList.remove('d-none');
+        });
+    </script>
+</body>
+</html>

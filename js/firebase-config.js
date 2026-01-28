@@ -1,22 +1,50 @@
-// Importar funções do Firebase
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+// Importamos o banco de dados e ferramentas do nosso config
+import { db, collection, getDocs } from './firebase-config.js';
 
-// Configuração do Firebase (suas credenciais)
-const firebaseConfig = {
-    apiKey: "AIzaSyDNciTbliYHdbn8wn0Gb2X0krakdVLqlLo",
-    authDomain: "hamburgueria-sistema.firebaseapp.com",
-    projectId: "hamburgueria-sistema",
-    storageBucket: "hamburgueria-sistema.firebasestorage.app",
-    messagingSenderId: "517643244866",
-    appId: "1:517643244866:web:2f1e5f499408d37b26a4db"
-};
+// Elemento onde os produtos vão aparecer
+const listaProdutos = document.getElementById('lista-produtos');
 
-// Inicializar Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
+// Função para carregar produtos
+async function carregarProdutos() {
+    if (!listaProdutos) return; // Se não estiver na página certa, para
 
-// Exportar para usar em outros arquivos
-export { db, auth, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where, orderBy, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged };
+    try {
+        listaProdutos.innerHTML = '<div class="col-12 text-center"><p>Carregando cardápio...</p></div>';
+        
+        // Busca a coleção 'produtos' no banco
+        const querySnapshot = await getDocs(collection(db, "produtos"));
+        
+        listaProdutos.innerHTML = ''; // Limpa o loading
+
+        if (querySnapshot.empty) {
+            listaProdutos.innerHTML = '<div class="col-12 text-center"><p>Nenhum produto cadastrado ainda.</p></div>';
+            return;
+        }
+
+        // Para cada produto encontrado...
+        querySnapshot.forEach((doc) => {
+            const produto = doc.data();
+            // Cria o HTML do produto
+            const html = `
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        ${produto.imagem ? `<img src="${produto.imagem}" class="card-img-top" alt="${produto.nome}" style="height: 200px; object-fit: cover;">` : ''}
+                        <div class="card-body">
+                            <h5 class="card-title">${produto.nome}</h5>
+                            <p class="card-text text-muted">${produto.descricao || ''}</p>
+                            <p class="card-text fw-bold text-success">R$ ${parseFloat(produto.preco).toFixed(2)}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            listaProdutos.innerHTML += html;
+        });
+
+    } catch (error) {
+        console.error("Erro ao buscar produtos:", error);
+        listaProdutos.innerHTML = '<div class="col-12 text-center text-danger"><p>Erro ao carregar produtos.</p></div>';
+    }
+}
+
+// Carrega ao iniciar
+document.addEventListener('DOMContentLoaded', carregarProdutos);
