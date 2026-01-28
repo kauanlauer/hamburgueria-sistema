@@ -1,6 +1,5 @@
-import { auth, db } from '../../js/firebase-config.js';
-import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { collection, addDoc, getDocs, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+// Importar configurações do Firebase
+import { db, auth, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy, signInWithEmailAndPassword, signOut, onAuthStateChanged } from '../../js/firebase-config.js';
 
 // Variáveis globais
 let categorias = [];
