@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burger House - Os Melhores Hambúrgueres da Cidade</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS Personalizado -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <!-- Logo -->
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="bi bi-fire text-warning"></i> BURGER HOUSE
+            </a>
+            
+            <!-- Botão Mobile -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <!-- Menu -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#home">Início</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#produtos">Cardápio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#promocoes">Promoções</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link position-relative" href="#" data-bs-toggle="modal" data-bs-target="#carrinhoModal">
+                            <i class="bi bi-cart3"></i> Carrinho
+                            <span class="badge bg-danger position-absolute top-0 start-100 translate-middle" id="carrinhoCount">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- BANNER PRINCIPAL -->
+    <section id="home" class="banner-principal">
+        <div class="container">
+            <div class="row align-items-center min-vh-100">
+                <div class="col-lg-6 text-white">
+                    <h1 class="display-3 fw-bold mb-4" data-aos="fade-right">
+                        Os Melhores Hambúrgueres da Cidade!
+                    </h1>
+                    <p class="lead mb-4" data-aos="fade-right" data-aos-delay="100">
+                        Feitos com ingredientes frescos e muito amor. Peça agora e receba quentinho!
+                    </p>
+                    <a href="#produtos" class="btn btn-warning btn-lg px-5 py-3" data-aos="fade-right" data-aos-delay="200">
+                        <i class="bi bi-cart-plus"></i> Ver Cardápio
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROMOÇÕES -->
+    <section id="promocoes" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5 fw-bold">🔥 Promoções Imperdíveis!</h2>
+            <div id="promocoesContainer" class="row g-4">
+                <!-- Promoções serão carregadas aqui via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- PRODUTOS -->
+    <section id="produtos" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5 fw-bold">🍔 Nosso Cardápio</h2>
+            
+            <!-- Filtro de Categorias -->
+            <div class="text-center mb-4">
+                <div class="btn-group" role="group" id="filtroCategoria">
+                    <button type="button" class="btn btn-outline-dark active" data-categoria="todos">Todos</button>
+                    <!-- Categorias serão carregadas aqui via JavaScript -->
+                </div>
+            </div>
+            
+            <!-- Lista de Produtos -->
+            <div id="produtosContainer" class="row g-4">
+                <!-- Produtos serão carregados aqui via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- MODAL DO CARRINHO -->
+    <div class="modal fade" id="carrinhoModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title"><i class="bi bi-cart3"></i> Meu Carrinho</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="carrinhoItens">
+                        <!-- Itens do carrinho serão carregados aqui -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="w-100">
+                        <div class="d-flex justify-content-between mb-3">
+                            <h5>Total:</h5>
+                            <h5 class="text-success fw-bold" id="carrinhoTotal">R$ 0,00</h5>
+                        </div>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Continuar Comprando</button>
+                        <button type="button" class="btn btn-success" id="finalizarPedido">
+                            <i class="bi bi-whatsapp"></i> Finalizar Pedido
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2024 Burger House - Todos os direitos reservados</p>
+            <p class="mb-0">
+                <i class="bi bi-geo-alt-fill text-warning"></i> Rua dos Hambúrgueres, 123 - Centro
+                <span class="mx-3">|</span>
+                <i class="bi bi-telephone-fill text-warning"></i> (11) 98765-4321
+            </p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- JavaScript Personalizado -->
+    <script type="module" src="js/app.js"></script>
+
+</body>
+</html>

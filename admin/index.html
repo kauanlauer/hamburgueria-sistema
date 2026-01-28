@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin - Burger House</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS Personalizado -->
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+    <!-- TELA DE LOGIN -->
+    <div id="loginScreen" class="min-vh-100 d-flex align-items-center justify-content-center bg-dark">
+        <div class="card shadow-lg" style="width: 400px;">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <i class="bi bi-shield-lock-fill text-warning" style="font-size: 4rem;"></i>
+                    <h3 class="mt-3 fw-bold">Painel Admin</h3>
+                    <p class="text-muted">Burger House</p>
+                </div>
+                
+                <form id="loginForm">
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="loginEmail" required>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label">Senha</label>
+                        <input type="password" class="form-control" id="loginSenha" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-warning w-100 fw-bold">
+                        <i class="bi bi-box-arrow-in-right"></i> Entrar
+                    </button>
+                </form>
+                
+                <div id="loginError" class="alert alert-danger mt-3 d-none"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAINEL ADMIN -->
+    <div id="adminPanel" class="d-none">
+        
+        <!-- NAVBAR -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand fw-bold">
+                    <i class="bi bi-fire text-warning"></i> BURGER HOUSE - Admin
+                </a>
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAdmin">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarAdmin">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <span class="nav-link" id="userEmail"></span>
+                        </li>
+                        <li class="nav-item">
+                            <button class="btn btn-outline-danger btn-sm" id="btnLogout">
+                                <i class="bi bi-box-arrow-right"></i> Sair
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container-fluid">
+            <div class="row">
+                
+                <!-- SIDEBAR -->
+                <div class="col-md-3 col-lg-2 bg-light min-vh-100 p-3">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item list-group-item-action active" data-section="produtos">
+                            <i class="bi bi-box-seam"></i> Produtos
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action" data-section="categorias">
+                            <i class="bi bi-tags"></i> Categorias
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action" data-section="pedidos">
+                            <i class="bi bi-receipt"></i> Pedidos
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action" data-section="configuracoes">
+                            <i class="bi bi-gear"></i> Configurações
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CONTEÚDO PRINCIPAL -->
+                <div class="col-md-9 col-lg-10 p-4">
+                    
+                    <!-- SEÇÃO PRODUTOS -->
+                    <div id="secaoProdutos" class="secao-content">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h2><i class="bi bi-box-seam"></i> Gerenciar Produtos</h2>
+                            <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalProduto">
+                                <i class="bi bi-plus-circle"></i> Novo Produto
+                            </button>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Imagem</th>
+                                        <th>Nome</th>
+                                        <th>Categoria</th>
+                                        <th>Preço</th>
+                                        <th>Status</th>
+                                        <th>Promoção</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="listaProdutos">
+                                    <!-- Produtos serão carregados aqui -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- SEÇÃO CATEGORIAS -->
+                    <div id="secaoCategorias" class="secao-content d-none">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h2><i class="bi bi-tags"></i> Gerenciar Categorias</h2>
+                            <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalCategoria">
+                                <i class="bi bi-plus-circle"></i> Nova Categoria
+                            </button>
+                        </div>
+                        
+                        <div class="row" id="listaCategorias">
+                            <!-- Categorias serão carregadas aqui -->
+                        </div>
+                    </div>
+
+                    <!-- SEÇÃO PEDIDOS -->
+                    <div id="secaoPedidos" class="secao-content d-none">
+                        <h2 class="mb-4"><i class="bi bi-receipt"></i> Pedidos Recentes</h2>
+                        
+                        <div id="listaPedidos">
+                            <!-- Pedidos serão carregados aqui -->
+                        </div>
+                    </div>
+
+                    <!-- SEÇÃO CONFIGURAÇÕES -->
+                    <div id="secaoConfiguracoes" class="secao-content d-none">
+                        <h2 class="mb-4"><i class="bi bi-gear"></i> Configurações da Loja</h2>
+                        
+                        <div class="card">
+                            <div class="card-body">
+                                <form id="formConfiguracoes">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Nome da Loja</label>
+                                        <input type="text" class="form-control" id="configNomeLoja" value="Burger House">
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Telefone WhatsApp</label>
+                                        <input type="text" class="form-control" id="configTelefone" placeholder="5511987654321">
+                                        <small class="text-muted">Formato: 5511987654321 (código do país + DDD + número)</small>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Endereço</label>
+                                        <input type="text" class="form-control" id="configEndereco" value="Rua dos Hambúrgueres, 123 - Centro">
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Taxa de Entrega (R$)</label>
+                                        <input type="number" step="0.01" class="form-control" id="configTaxaEntrega" value="5.00">
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="configAberto" checked>
+                                            <label class="form-check-label fw-bold" for="configAberto">
+                                                Loja Aberta
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="bi bi-check-circle"></i> Salvar Configurações
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PRODUTO -->
+    <div class="modal fade" id="modalProduto" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title" id="modalProdutoTitulo">Novo Produto</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formProduto">
+                        <input type="hidden" id="produtoId">
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Nome do Produto *</label>
+                            <input type="text" class="form-control" id="produtoNome" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Descrição *</label>
+                            <textarea class="form-control" id="produtoDescricao" rows="3" required></textarea>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Categoria *</label>
+                                <select class="form-select" id="produtoCategoria" required>
+                                    <option value="">Selecione...</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Preço (R$) *</label>
+                                <input type="number" step="0.01" class="form-control" id="produtoPreco" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">URL da Imagem *</label>
+                            <input type="url" class="form-control" id="produtoImagem" required>
+                            <small class="text-muted">Cole o link de uma imagem da internet</small>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="produtoAtivo" checked>
+                                    <label class="form-check-label fw-bold">Produto Ativo</label>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="produtoPromocao">
+                                    <label class="form-check-label fw-bold">Em Promoção</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Ordem de Exibição</label>
+                            <input type="number" class="form-control" id="produtoOrdem" value="0">
+                            <small class="text-muted">Menor número aparece primeiro</small>
+                        </div>
+                        
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="bi bi-check-circle"></i> Salvar Produto
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CATEGORIA -->
+    <div class="modal fade" id="modalCategoria" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title" id="modalCategoriaTitulo">Nova Categoria</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formCategoria">
+                        <input type="hidden" id="categoriaId">
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Nome da Categoria *</label>
+                            <input type="text" class="form-control" id="categoriaNome" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Ícone (Bootstrap Icons)</label>
+                            <input type="text" class="form-control" id="categoriaIcone" placeholder="bi-fire">
+                            <small class="text-muted">Exemplos: bi-fire, bi-cup-straw, bi-egg-fried</small>
+                        </div>
+                        
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="bi bi-check-circle"></i> Salvar Categoria
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- JavaScript Personalizado -->
+    <script type="module" src="js/admin.js"></script>
+
+</body>
+</html>
